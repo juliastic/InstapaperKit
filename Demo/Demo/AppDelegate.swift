@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Demo
 //
-//  Created by Marcel Voß on 28/12/2016.
+//  Created by Marcel Voß on 30/12/2016.
 //  Copyright © 2016 Marcel Voss. All rights reserved.
 //
 
@@ -13,10 +13,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         // Override point for customization after application launch.
-        self.window!.backgroundColor = UIColor.white
+        self.window!.backgroundColor = UIColor.whiteColor
         self.window!.makeKeyAndVisible()
         return true
     }
