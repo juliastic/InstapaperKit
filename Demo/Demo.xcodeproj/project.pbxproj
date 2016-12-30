@@ -11,6 +11,9 @@
 		1F59E5EA1E16EEF900A38CF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F59E5E91E16EEF900A38CF7 /* Assets.xcassets */; };
 		1F59E5ED1E16EEF900A38CF7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F59E5EB1E16EEF900A38CF7 /* LaunchScreen.storyboard */; };
 		1F59E5F81E16EEF900A38CF7 /* DemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F59E5F71E16EEF900A38CF7 /* DemoTests.swift */; };
+		1F9429481E16EFED00D2AB3F /* InstapaperAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9429461E16EFED00D2AB3F /* InstapaperAPI.swift */; };
+		1F9429491E16EFED00D2AB3F /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9429471E16EFED00D2AB3F /* Networking.swift */; };
+		1F94294B1E16F00300D2AB3F /* NewsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F94294A1E16F00300D2AB3F /* NewsTableViewController.swift */; };
 		DBC7DFBBCEE227FAC8DCF696 /* Pods_Demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F3CCDE88CE6175213CB3133 /* Pods_Demo.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +36,9 @@
 		1F59E5F31E16EEF900A38CF7 /* DemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F59E5F71E16EEF900A38CF7 /* DemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTests.swift; sourceTree = "<group>"; };
 		1F59E5F91E16EEF900A38CF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F9429461E16EFED00D2AB3F /* InstapaperAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InstapaperAPI.swift; path = ../../InstapaperKit/InstapaperAPI.swift; sourceTree = "<group>"; };
+		1F9429471E16EFED00D2AB3F /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Networking.swift; path = ../../InstapaperKit/Networking.swift; sourceTree = "<group>"; };
+		1F94294A1E16F00300D2AB3F /* NewsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsTableViewController.swift; sourceTree = "<group>"; };
 		9F3CCDE88CE6175213CB3133 /* Pods_Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A415A36A621282BA541D59B4 /* Pods-Demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Demo/Pods-Demo.debug.xcconfig"; sourceTree = "<group>"; };
 		D69DF29EC355C4DCB6BC172E /* Pods-Demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo.release.xcconfig"; path = "Pods/Target Support Files/Pods-Demo/Pods-Demo.release.xcconfig"; sourceTree = "<group>"; };
@@ -90,6 +96,8 @@
 			isa = PBXGroup;
 			children = (
 				1F59E5E71E16EEF900A38CF7 /* AppDelegate.swift */,
+				1F94294A1E16F00300D2AB3F /* NewsTableViewController.swift */,
+				1F9429451E16EFE200D2AB3F /* InstapaperKit */,
 				1F59E6021E16EF0800A38CF7 /* Resources */,
 			);
 			path = Demo;
@@ -112,6 +120,15 @@
 				1F59E5EE1E16EEF900A38CF7 /* Info.plist */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		1F9429451E16EFE200D2AB3F /* InstapaperKit */ = {
+			isa = PBXGroup;
+			children = (
+				1F9429461E16EFED00D2AB3F /* InstapaperAPI.swift */,
+				1F9429471E16EFED00D2AB3F /* Networking.swift */,
+			);
+			name = InstapaperKit;
 			sourceTree = "<group>";
 		};
 		43A6149E963847CCA2E528DC /* Frameworks */ = {
@@ -277,7 +294,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F94294B1E16F00300D2AB3F /* NewsTableViewController.swift in Sources */,
+				1F9429491E16EFED00D2AB3F /* Networking.swift in Sources */,
 				1F59E5E81E16EEF900A38CF7 /* AppDelegate.swift in Sources */,
+				1F9429481E16EFED00D2AB3F /* InstapaperAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +499,7 @@
 				1F59E5FE1E16EEF900A38CF7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1F59E5FF1E16EEF900A38CF7 /* Build configuration list for PBXNativeTarget "DemoTests" */ = {
 			isa = XCConfigurationList;
@@ -487,6 +508,7 @@
 				1F59E6011E16EEF900A38CF7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

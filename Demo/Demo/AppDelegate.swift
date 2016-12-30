@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         // Override point for customization after application launch.
         
-        
+        window?.rootViewController = UINavigationController(rootViewController: NewsTableViewController(style: .plain))
         
         self.window!.backgroundColor = UIColor.white
         self.window!.makeKeyAndVisible()
