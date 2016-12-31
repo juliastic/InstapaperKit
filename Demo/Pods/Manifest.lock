@@ -1,12 +1,15 @@
 PODS:
+  - ReachabilitySwift (3)
   - SwiftKeychainWrapper (3.0.1)
 
 DEPENDENCIES:
+  - ReachabilitySwift (~> 3)
   - SwiftKeychainWrapper
 
 SPEC CHECKSUMS:
+  ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SwiftKeychainWrapper: 38952a3636320ae61bad3513cadd870929de7a4a
 
-PODFILE CHECKSUM: e1923c583bd4cd95c1d76dbe39213c3796dc1d46
+PODFILE CHECKSUM: 3095723bee0dae96a6a5c9ab5eb3a8a64f81934a
 
 COCOAPODS: 1.1.1
