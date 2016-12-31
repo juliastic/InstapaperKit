@@ -9,29 +9,32 @@
 import UIKit
 import SwiftKeychainWrapper
 
-enum ResponseError: Error {
+/// Possible response errors from Instapaper's servers
+public enum ResponseError: Error {
+    /// Invalid account information
     case ConnectionInvalid
     case ConnectionTimedOut
     case ConnectionFailed
     case SavingFailed
     case NotSignedIn
+    case AlreadySignedIn
 }
 
 class InstapaperAPI: NSObject {
-    static let instapaperURL = URL(string: "http://www.instapaper.com/api/")
-    static let authenticate = "authenticate"
-    static let bookmarksURI = "/1/bookmarks"
-    static let add = "add"
+    static private let instapaperURL = URL(string: "http://www.instapaper.com/api/")
+    static private let authenticate = "authenticate"
+    static private let bookmarksURI = "/1/bookmarks"
+    static private let add = "add"
     
     class func logIn(_ user: String, withPassword password: String, closure: @escaping (_ authorized: Bool, _ error: Error?) -> Void) {
-        if KeychainWrapper.standard.string(forKey: "user") == nil {
+        if KeychainWrapper.standard.string(forKey: "username") == nil {
             let parameters = ["username": user.trimmingCharacters(in: .whitespacesAndNewlines), "password": password.trimmingCharacters(in: .whitespacesAndNewlines)]
             Networking.GET(url: instapaperURL?.appendingPathComponent(authenticate), parameters: parameters) { (error, result, response) in
                 if let response = response {
                     switch response.statusCode {
-                    case 200, 201, 202:
+                    case 200:
                         if error == nil {
-                            let usernameSaveSuccesful = KeychainWrapper.standard.set(user, forKey: "user")
+                            let usernameSaveSuccesful = KeychainWrapper.standard.set(user, forKey: "username")
                             let passwordSaveSuccesful = KeychainWrapper.standard.set(password, forKey: "password")
                             if !usernameSaveSuccesful || !passwordSaveSuccesful {
                                 closure(true, ResponseError.SavingFailed)
@@ -39,25 +42,34 @@ class InstapaperAPI: NSObject {
                                 closure(true, nil)
                             }
                         }
-                    case 408:
-                        closure(false, ResponseError.ConnectionTimedOut)
+                        break
+                    case 403:
+                        closure(false, ResponseError.ConnectionInvalid)
                         break
                     default:
-                        closure(false, ResponseError.ConnectionInvalid)
+                        closure(false, ResponseError.ConnectionTimedOut)
                     }
+                } else {
+                    closure(false, ResponseError.ConnectionFailed)
                 }
             }
+        } else {
+            closure(false, ResponseError.AlreadySignedIn)
         }
     }
     
-    class func add(_ url: URL, withTitle title: String?, description: String?, resolve_final_url: Int?, closure: @escaping (_ sent: Bool, _ error: Error?) -> Void) {
-        if let retrievedUsername = KeychainWrapper.standard.string(forKey: "user"), let retrievedPassword = KeychainWrapper.standard.string(forKey: "password") {
-            let parameters = ["username": retrievedUsername, "password": retrievedPassword, "url": url.absoluteString, "title": title ?? "", "description": description ?? "", "folder_id": "unread", "resolve_final_url": "\(resolve_final_url)"] as [String : String]
+    class func add(_ url: URL, withTitle title: String?, selection: String?, closure: @escaping (_ sent: Bool, _ error: Error?) -> Void) {
+        if let retrievedUsername = KeychainWrapper.standard.string(forKey: "username"), let retrievedPassword = KeychainWrapper.standard.string(forKey: "password") {
+            let parameters = ["username": retrievedUsername, "password": retrievedPassword, "url": url.absoluteString, "title": title ?? "", "selection": selection ?? ""] as [String : String]
             Networking.POST(url: instapaperURL?.appendingPathComponent(bookmarksURI + add), parameters: parameters) { (error, result, response) in
                 if let response = response {
                     switch response.statusCode {
-                    case 200, 201, 202:
+                    case 201:
                         closure(true, nil)
+                        break
+                    case 400, 403:
+                        closure(false, ResponseError.ConnectionInvalid)
+                        break
                     default:
                         closure(false, ResponseError.ConnectionFailed)
                     }
