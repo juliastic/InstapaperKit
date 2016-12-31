@@ -8,14 +8,22 @@
 
 import UIKit
 
-class NewsTableViewController: UITableViewController, XMLParserDelegate {
+class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestureRecognizerDelegate {
     
     var articles = [Article]()
     let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-    var currentElement = ""
     let refresher = UIRefreshControl()
-    
     var elementStack = [String]()
+    
+    var currentElement: String? {
+        return elementStack.last
+    }
+    
+    var lastElement: String? {
+        let index = elementStack.count - 2
+        return elementStack[index]
+    }
+    
     
     struct Article {
         var title = ""
@@ -36,13 +44,28 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
         refresher.addTarget(self, action: #selector(refreshEntries), for: .valueChanged)
         tableView.refreshControl = refresher
         
-        refreshEntries()
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(gestureRecognizer:)))
+        longPress.delegate = self
+        tableView.addGestureRecognizer(longPress)
         
+        refreshEntries()
+    }
+    
+    func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+        let point = gestureRecognizer.location(in: tableView)
+    
+        if let indexPath = tableView.indexPathForRow(at: point) {
+            let article = articles[indexPath.row]
+            
+            if gestureRecognizer.state == .began {
+                UIApplication.shared.open(article.url!, options: [:], completionHandler: nil)
+            }
+        }
     }
     
     func refreshEntries() {
-        if let vergeURL = URL(string: "https://www.theverge.com/rss/index.xml") {
-            let request = URLRequest(url: vergeURL)
+        if let appleURL = URL(string: "http://www.apple.com/pr/feeds/pr.rss") {
+            let request = URLRequest(url: appleURL)
             
             URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
                 
@@ -77,7 +100,6 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
         return articles.count
     }
     
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier")
         
@@ -86,7 +108,9 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
         }
         
         let article = articles[indexPath.row]
-        print(article.title)
+        print(article)
+
+        
         cell?.detailTextLabel?.text = article.url?.absoluteString
         cell?.textLabel?.text = article.title
         
@@ -109,53 +133,32 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         
-        print(elementName)
-        
+        // Add element to elementStack in order to keep track of them
         elementStack.append(elementName)
         
-        if elementName == "entry" {
+        if elementName == "item" {
+            // Add new Article for each item
             articles.append(Article())
         }
-        
-        if elementName == "title" {
-            //print(elementName)
-        }
-        
-        currentElement = elementName
-        
     }
     
-    func parser(_ parser: XMLParser, foundCharacters string: String) {
-        var article = articles.last
-        if articles.count > 0 {
-            articles.removeLast()
-        }
-        
-        if currentElement == "title" {
-            article?.title = string
-            print(article?.title)
+    func parser(_ parser: XMLParser, foundCDATA CDATABlock: Data) {
+        let decodedData = NSString(data: CDATABlock, encoding: String.Encoding.utf8.rawValue)
+
+        if lastElement == "item" {
+            var article = articles.removeLast()
             
-            //print(string)
-            
-            
-        } else if currentElement == "id" {
-            // article?.url = URL(string: string)
+            if currentElement == "title" {
+                article.title = decodedData as! String
+            } else if currentElement == "link" {
+                article.url = URL(string: decodedData as! String)
+            }
+            articles.append(article)
         }
-        
-        if article != nil {
-            articles.append(article!)
-        }
-        
     }
     
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        
-        if elementName == "entry" {
-            
-        }
-        
         elementStack.removeLast()
-        
     }
     
     func parserDidEndDocument(_ parser: XMLParser) {
@@ -164,6 +167,5 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
             refresher.endRefreshing()
             activityIndicator.stopAnimating()
         }
-        
     }
 }
