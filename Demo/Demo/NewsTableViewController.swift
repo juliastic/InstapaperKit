@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftKeychainWrapper
 
 class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestureRecognizerDelegate {
     
@@ -24,7 +23,6 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
         let index = elementStack.count - 2
         return elementStack[index]
     }
-    
     
     struct Article {
         var title = ""
@@ -88,7 +86,7 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
     }
     
     func signInPressed() {
-        let alertController = UIAlertController(title: "Enter:", message: "", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Log into Instapaper", message: "", preferredStyle: .alert)
         
         let saveAction = UIAlertAction(title: "Log In", style: .default, handler: {
             alert -> Void in
@@ -107,9 +105,6 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
                         break
                     case ResponseError.ConnectionTimedOut:
                         alertString = "Error connecting to server"
-                        break
-                    case ResponseError.SavingFailed:
-                        alertString = "Error saving username/password"
                         break
                     default:
                         alertString = "Invalid input"
@@ -173,18 +168,23 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // TODO: Add item to Instapaper; if not signed in, ask user to sign in first
         let selectedArticle = articles[indexPath.row]
-        if KeychainWrapper.standard.string(forKey: "username") != nil {
-            InstapaperAPI.add(selectedArticle.url!, withTitle: selectedArticle.title, selection: "", closure: { (succesful, error) in
-                if succesful {
-                    let alert = UIAlertController(title: "Added!", message: "Succesfully added URL to Instapaper", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
+        InstapaperAPI.add(selectedArticle.url!, withTitle: selectedArticle.title, selection: "", closure: { (succesful, error) in
+            if succesful {
+                let alert = UIAlertController(title: "Added!", message: "Succesfully added URL to Instapaper", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                if let error = error {
+                    switch error {
+                    case ResponseError.NotSignedIn:
+                        self.signInPressed()
+                        break
+                    default:
+                        break
+                    }
                 }
-            })
-        } else {
-            // prompt login view
-        }
-
+            }
+        })
         
     }
     
