@@ -163,8 +163,6 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
         }
         
         let article = articles[indexPath.row]
-        print(article)
-
         
         cell?.detailTextLabel?.text = article.url?.absoluteString
         cell?.textLabel?.text = article.title

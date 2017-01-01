@@ -21,10 +21,20 @@ public enum ResponseError: Error {
 }
 
 class InstapaperAPI: NSObject {
-    static private let instapaperURL = URL(string: "http://www.instapaper.com/api/")
+    static private let instapaperURL = URL(string: "https://www.instapaper.com/api/")
     static private let authenticate = "authenticate"
     static private let bookmarksURI = "/1/bookmarks"
     static private let add = "add"
+    
+    private var password: String? {
+        get {
+            return KeychainWrapper.standard.string(forKey: "password")
+        } set {
+            if let newPassword = newValue {
+                KeychainWrapper.standard.set(newPassword, forKey: "password")
+            }
+        }
+    }
     
     class func logIn(_ user: String, withPassword password: String, closure: @escaping (_ authorized: Bool, _ error: Error?) -> Void) {
         if KeychainWrapper.standard.string(forKey: "username") == nil {
