@@ -30,11 +30,11 @@ public enum ResponseError: Error {
 
 class InstapaperAPI: NSObject {
     static private let defaults = UserDefaults.standard
-    
+    private typealias URLInfo = (URL, String, String)
+
     static private let instapaperURL = "https://www.instapaper.com"
     static private let queuedURLsKey = "queuedURLs"
     static private var queuedURLs = [URLInfo]()
-    private typealias URLInfo = (URL, String, String)
 
     static private let instapaperAPIURL = URL(string: "https://www.instapaper.com/api/")
     static private let authenticate = "authenticate"
@@ -51,6 +51,12 @@ class InstapaperAPI: NSObject {
         }
     }
     
+    /// Logs user into Instapaper
+    ///
+    /// - Parameters:
+    ///   - username: username of account
+    ///   - password: password of account, may be empty
+    ///   - closure: if succesfully logged in closure's parameters are set to true, nil, if error occured parameters are set to false, ResponseError
     class func logIn(_ username: String, withPassword password: String, closure: @escaping (_ authorized: Bool, _ error: Error?) -> Void) {
         if self.username == nil {
             let parameters = ["username": username.trimmingCharacters(in: .whitespacesAndNewlines), "password": password.trimmingCharacters(in: .whitespacesAndNewlines)]
@@ -77,6 +83,13 @@ class InstapaperAPI: NSObject {
         }
     }
     
+    /// Adds url to Instapaper account
+    ///
+    /// - Parameters:
+    ///   - url: url to be added
+    ///   - title: title of url
+    ///   - selection: selection of url
+    ///   - closure: if succesfully added closure's parameters are set to true, nil, if error occured parameters are set to false, ResponseError
     class func add(_ url: URL, withTitle title: String?, selection: String?, closure: @escaping (_ sent: Bool, _ error: Error?) -> Void) {
         if let username = self.username {
             let parameters = ["username": username, "password": password ?? "", "url": url.absoluteString, "title": title ?? "", "selection": selection ?? ""] as [String : String]
@@ -91,7 +104,8 @@ class InstapaperAPI: NSObject {
                 closure(false, ResponseError.ConnectionFailed)
                 return
             } else if let queuedURLs = defaults.array(forKey: queuedURLsKey) as? [InstapaperAPI.URLInfo] {
-                if queuedURLs.count > 0 {
+                self.queuedURLs = queuedURLs
+                if self.queuedURLs.count > 0 {
                     addQueudedLinksToInstapaper()
                 }
             }
@@ -115,6 +129,9 @@ class InstapaperAPI: NSObject {
         }
     }
     
+    /// queues a URLInfo object to queuedURLs
+    ///
+    /// - Parameter info: URLInfo to be added
     private class func queueURLInfo(_ info: URLInfo) {
         if !queuedURLs.contains(where: { info == $0 }) {
             queuedURLs.append(info)
@@ -124,6 +141,9 @@ class InstapaperAPI: NSObject {
         }
     }
     
+    /// deques a URLInfo object from queuedURLs
+    ///
+    /// - Parameter info: URLInfo to be removed
     private class func dequeURL(_ info: URLInfo) {
         queuedURLs = queuedURLs.filter({ info != $0 })
         if queuedURLs.count == 0 {
@@ -135,10 +155,11 @@ class InstapaperAPI: NSObject {
         defaults.synchronize()
     }
     
+    /// Tries to add queuded links to Instapaper
     private class func addQueudedLinksToInstapaper() {
         for info in queuedURLs {
-            add(info.0, withTitle: info.1, selection: info.2, closure: { (successful, error) in
-                if successful {
+            add(info.0, withTitle: info.1, selection: info.2, closure: { (succesful, error) in
+                if succesful {
                     dequeURL(info)
                 }
             })
