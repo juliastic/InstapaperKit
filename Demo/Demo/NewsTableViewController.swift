@@ -93,7 +93,7 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
             
             let usernameField = alertController.textFields![0] as UITextField
             let passwordField = alertController.textFields![1] as UITextField
-            InstapaperAPI.logIn(usernameField.text!, withPassword: passwordField.text!, closure: { (succesful, error) in
+            InstapaperAPI.logIn(usernameField.text!, withPassword: passwordField.text!, closure: { (successful, error) in
                 var alertString = ""
                 if let error = error {
                     switch error {
@@ -111,7 +111,7 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
                     }
                 }
                 
-                if succesful {
+                if successful {
                     let alert = UIAlertController(title: "Logged in!", message: "Succesfully logged into Instapaper", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                     self.present(alert, animated: true, completion: nil)
@@ -168,8 +168,8 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, UIGestu
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // TODO: Add item to Instapaper; if not signed in, ask user to sign in first
         let selectedArticle = articles[indexPath.row]
-        InstapaperAPI.add(selectedArticle.url!, withTitle: selectedArticle.title, selection: "", closure: { (succesful, error) in
-            if succesful {
+        InstapaperAPI.add(selectedArticle.url!, withTitle: selectedArticle.title, selection: "", closure: { (successful, error) in
+            if successful {
                 let alert = UIAlertController(title: "Added!", message: "Succesfully added URL to Instapaper", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)

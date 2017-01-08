@@ -14,14 +14,14 @@ Manually drag the InstapaperKit folder into your project.
 
 To log into Instapaper use:
 ``` swift 
-InstapaperAPI.logIn(username, withPassword: password, closure: { (succesful, error) in
+InstapaperAPI.logIn(username, withPassword: password, closure: { (successful, error) in
     // insert magic here
 })
 ```
 
-If log in was succesful, URLs can be added to the connected account:
+If log in was successful, URLs can be added to the connected account:
 ``` swift 
-InstapaperAPI.add(url, withTitle: title, "", closure: { (succesful, error) in 
+InstapaperAPI.add(url, withTitle: title, "", closure: { (successful, error) in 
     // insert magic here
 })
 ```
